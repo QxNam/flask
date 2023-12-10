@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Natural Language Processing</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h1>Named Entity Recognition</h1>
+        <form id="nlpForm" action="/nlp_predict" method="post" enctype="multipart/form-data">
+            <input type="file" name="input_file">
+            <textarea id="input_paragraph" name="input_paragraph" placeholder="Nhập văn bản">Vào lúc 12 giờ ngày 12, ông Nguyễn Văn Công đã bắt đầu làm việc ở Việt Nam, sắp tới sẽ sang công tác ở Thái Lan.</textarea>
+            <button type="submit">Tìm thực thể</button>
+        </form>
+        <div class="progress" style="display: none;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+        </div>
+        <div class="output"></div>
+    </div>
+    <script>
+        $('#nlpForm').on('submit', function(e) {
+            e.preventDefault();
+            $('.progress').show();  // Show the progress bar
+            $.ajax({
+                url: '/nlp_predict',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('.output').html(response.text);
+                },
+                error: function(error) {
+                    console.log(error);
+                },
+                complete: function() {
+                    $('.progress').hide();  // Hide the progress bar when the request completes
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('input[type="file"]').on('change', function() {
+                var file = this.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('textarea[name="input_paragraph"]').val(e.target.result);
+                };
+                reader.readAsText(file);
+            });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#theme-toggle').on('click', function() {
+                $('body, .container').toggleClass('dark-theme');
+            });
+        });
+    </script>
+</body>
+</html>

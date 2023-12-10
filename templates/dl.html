@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deep Learning</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <h1>Titanic</h1>
+        <form action="/dl_predict" method="post" id="form">
+            <div class="form-group">
+                <label for="pclass">Kinh tế:</label>
+                <select id="pclass" name="pclass">
+                    <option value="1">Giàu</option>
+                    <option value="2">Khá giả</option>
+                    <option value="3">Bình thường</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="age">Tuổi:</label>
+                <input type="range" id="age" name="age" min="0" max="100">
+                <span id="ageValue"></span>
+            </div>
+            <div class="form-group">
+                <div class="cell-flex">
+                    <div class="input-group">
+                        <label for="sex">Giới tính:</label>
+                        <label><input type="radio" value="1" name="sex" required checked/> <span>Nam</span></label>
+                        <label><input type="radio" value="0" name="sex" required/> <span>Nữ</span></label>
+                    </div>
+                    <div class="input-group">
+                        <label for="title">Danh xưng:</label>
+                        <select id="title" name="title">
+                            <option value="mr">Mr</option>
+                            <option value="mrs">Mrs</option>
+                            <option value="miss">Miss</option>
+                            <option value="master">Master</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="form-group">
+                <div class="cell-flex">
+                    <div class="input-group">
+                        <label for="sibsp">Số lượng người thân:</label>
+                        <input type="number" id="sibsp" name="sibsp" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="parch">Số lượng người nhà:</label>
+                        <input type="number" id="parch" name="parch" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="cell-flex">
+                    <div class="input-group">
+                        <label for="ticket">Tên vé:</label>
+                        <input type="text" id="ticket" name="ticket" value="PC 17318">
+                    </div>
+                    <div class="input-group">
+                        <label for="fare">Giá vé:</label>
+                        <input type="number" id="fare" name="fare" value="30.6958">
+                    </div>
+                    <div class="input-group">
+                        <label for="cabin">Cabin:</label>
+                        <input type="text" id="cabin" name="cabin" value="C101">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="form-group">
+                <label for="embarked">Cảng đón:</label>
+                <select id="embarked" name="embarked">
+                    <option value="C">C</option>
+                    <option value="Q">Q</option>
+                    <option value="S">S</option>
+                </select>
+            </div>
+            <button type="submit">Kiểm tra</button>
+        </form>
+        
+        <div id="loading" style="display: none;">
+            <p>Loading...</p>
+        </div>
+        <div class="output"></div>
+    </div>
+
+    <script>
+        $('#form').on('submit', function(e) {
+            e.preventDefault();
+            $('#loading').show();  // Show the progress bar
+            $.ajax({
+                url: '/dl_predict',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('.output').html(response.text);
+                },
+                error: function(error) {
+                    console.log(error);
+                },
+                complete: function() {
+                    $('#loading').hide();  // Hide the progress bar when the request completes
+                }
+            });
+        });
+    </script>
+    <!--<script>
+        $('button').on('click', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/dl_predict',
+                type: 'POST',
+                data: $('form').serialize(),
+                success: function(response) {
+                    $('#result').text(JSON.stringify(response));
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    </script>-->
+    <script>
+        $(document).ready(function() {
+            $('#theme-toggle').on('click', function() {
+                $('body, .container').toggleClass('dark-theme');
+            });
+        });
+    </script>
+    <script>
+        $('#age').on('input', function() {
+            $('#ageValue').text(this.value);
+        });
+    </script>
+</body>
+</html>

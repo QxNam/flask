@@ -1,0 +1,10 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<nav>
+    <a href="/" {% if request.path == '/' %}class="active"{% endif %}>Home</a>
+    <a href="/dl" {% if request.path == '/dl' %}class="active"{% endif %}>Deep Learning</a>
+    <a href="/nlp" {% if request.path == '/nlp' %}class="active"{% endif %}>Natural Language Processing</a>
+    <button id="theme-toggle"><i class="fas fa-adjust"></i></button>
+</nav>
